@@ -8,27 +8,32 @@
 <script>
 function GetProductTypes(product)
 {
-var max = 3;
-$.getJSON("http://widgets.cafepress.com/search/show/" + product + "?callback=?",
- { type: "tag", resultsPerPage: "4", tracking: "fbrecv2", format: "json" },
- function(data) 
- {   
-   //test
-   //if (data.resultcount != 4) { alert ("result count: " + data.resultcount); }
-   $.each(data.product, function(index,element) 
-   { $("<img/>").attr("src", element.imageurl).appendTo("#images");   
-     if ( index == max ) return false;    
-   });  
- });
+   var max = 4;
+   $.getJSON("http://widgets.cafepress.com/search/show/" + product + "?callback=?",
+   { type: "tag", resultsPerPage: "4", tracking: "fbrecv2", format: "json" },
+   function(data) 
+   {   
+      //test
+      //if (data.resultcount != max) { alert("result count: " + data.resultcount); }   
+      $.each(data.product, function(index,element) 
+      {   $("<img/>").attr("src", element.imageurl).appendTo("#images");   
+          if (index+1 == max) 
+	      {
+	         //test
+	         //alert("index: " + index);	  
+	         return false;
+	      }    
+      });  
+   });
 }
 
 function GetProductTypesTest()
 { 
- var productTypes = new Array("outdoors", "running", "reading", "camping");
- for (var index = 0; index < productTypes.length; index++)
- {
-  GetProductTypes(productTypes[index]);
- }
+   var productTypes = new Array("outdoors", "running", "reading", "camping");
+   for (var index = 0; index < productTypes.length; index++)
+   {
+      GetProductTypes(productTypes[index]);
+   }
 }
 
 GetProductTypesTest(); 
