@@ -1,0 +1,38 @@
+<!DOCTYPE html><html>
+<head>  
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>  
+<div id="images"></div>
+
+<script>
+function GetProductTypes(product)
+{
+var max = 3;
+$.getJSON("http://widgets.cafepress.com/search/show/" + product + "?callback=?",
+ { type: "tag", resultsPerPage: "4", tracking: "fbrecv2", format: "json" },
+ function(data) 
+ {   
+   //test
+   //if (data.resultcount != 4) { alert ("result count: " + data.resultcount); }
+   $.each(data.product, function(index,element) 
+   { $("<img/>").attr("src", element.imageurl).appendTo("#images");   
+     if ( index == max ) return false;    
+   });  
+ });
+}
+
+function GetProductTypesTest()
+{ 
+ var productTypes = new Array("outdoors", "running", "reading", "camping");
+ for (var index = 0; index < productTypes.length; index++)
+ {
+  GetProductTypes(productTypes[index]);
+ }
+}
+
+GetProductTypesTest(); 
+</script>
+ 
+</body></html>
+
