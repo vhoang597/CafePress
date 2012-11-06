@@ -1,0 +1,97 @@
+<!doctype html>
+ 
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Autocomplete - Custom data and display</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css" />
+<style>
+.icon { height: 32px; width: 32px; }
+.highlight { background: #FFFF00; font-weight: bold; }
+</style>
+	
+<script>
+
+function ProcessForm()
+{
+   var s = document.AutocompleteForm.inputTextbox.value;
+   if(s == "")
+   {
+	  return false;
+   }
+   return true;
+}
+
+function ReplaceString(oldS, newS, fullS){
+   return fullS.split(oldS).join(newS);
+}
+
+$(function() {
+$( "#searchButton" ).button({ disabled: true });		
+$( "#inputTextbox" ).autocomplete({
+   minLength: 2,
+   autoFocus: true,						
+   source: function( request, response ) {                
+      $.ajax({                    
+         url: "http://widgets.cafepress.com/search/show/outdoors",                    
+         dataType: "jsonp",                    
+         data: {                        
+            type: "tag", 
+            resultsPerPage: "4", 
+            tracking: "fbrecv2",
+         },                    
+         success: function( data ) {                        
+            response( $.map( data.product, function( item ) {                            
+               return {
+                  label: item.imageurl, value: item.productid
+               }          
+            }));                    
+         }       
+      });
+   },
+			
+   focus: function( event, ui ) {
+      $( "#searchButton" ).button({ disabled: true });				
+      return false;
+   },
+   select: function( event, ui ) {
+      $( "#inputTextbox" ).val( ui.item.value );			
+      $( "#searchButton" ).button({ disabled: false });
+      return false;
+   },			
+   response: function( event, ui )
+   {
+   }		
+})
+.data( "autocomplete" )._renderItem = function( ul, item ) {
+   var oldS = document.AutocompleteForm.inputTextbox.value;
+   var newS = "<strong class=\"highlight\">" + document.AutocompleteForm.inputTextbox.value + "</strong>";
+   var fullS = item.value;
+   var highlightS = ReplaceString(oldS, newS, fullS);   
+   
+   return $( "<li>" )
+      .data( "item.autocomplete", item )
+      .append( "<a>" + "<img class=\"icon\" src=" + item.label + ">" + highlightS + "</a>" )
+      .appendTo( ul );
+};
+});
+
+</script>
+</head>
+
+<body>
+
+<div class="ui-widget">
+<form action="" method="post" name="AutocompleteForm" onsubmit="return(ProcessForm());">
+<div>Select a product id (type "15" for a start):</div>
+<input id="inputTextbox" size="40" />
+<input id="searchButton" type="submit" value="Search" />
+</form>
+</div>
+ 
+</body>
+</html>
+
